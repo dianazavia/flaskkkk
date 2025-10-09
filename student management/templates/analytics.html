@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Student Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>EduManage</span>
+            </div>
+            <div class="nav-menu">
+                <a href="{{ url_for('home') }}" class="nav-link">Dashboard</a>
+                <a href="{{ url_for('student_list') }}" class="nav-link">Students</a>
+                <a href="{{ url_for('analytics') }}" class="nav-link active">Analytics</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>Analytics & Reports</h1>
+            <p>Comprehensive insights into student performance and distribution</p>
+        </div>
+    </section>
+
+    <section class="analytics-section">
+        <div class="container">
+            <div class="analytics-grid">
+                <!-- Course Distribution -->
+                <div class="analytics-card">
+                    <h3><i class="fas fa-book"></i> Course Distribution</h3>
+                    <div class="chart-container">
+                        {% for course, count in course_distribution.items() %}
+                        <div class="chart-item">
+                            <div class="chart-label">
+                                <span>{{ course }}</span>
+                                <span>{{ count }} students</span>
+                            </div>
+                            <div class="chart-bar">
+                                <div class="bar-fill" style="width: {{ (count / course_distribution.values()|max * 100) if course_distribution.values()|max > 0 else 0 }}%"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- GPA Distribution -->
+                <div class="analytics-card">
+                    <h3><i class="fas fa-star"></i> GPA Distribution</h3>
+                    <div class="chart-container">
+                        {% for range, count in gpa_ranges.items() %}
+                        <div class="chart-item">
+                            <div class="chart-label">
+                                <span>{{ range }}</span>
+                                <span>{{ count }} students</span>
+                            </div>
+                            <div class="chart-bar">
+                                <div class="bar-fill" style="width: {{ (count / gpa_ranges.values()|max * 100) if gpa_ranges.values()|max > 0 else 0 }}%"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Year Distribution -->
+                <div class="analytics-card">
+                    <h3><i class="fas fa-calendar-alt"></i> Year Distribution</h3>
+                    <div class="year-chart">
+                        {% for year, count in year_distribution.items() %}
+                        <div class="year-item">
+                            <div class="year-label">Year {{ year }}</div>
+                            <div class="year-count">{{ count }}</div>
+                            <div class="year-bar">
+                                <div class="year-fill" style="height: {{ (count / year_distribution.values()|max * 100) if year_distribution.values()|max > 0 else 0 }}%"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Performance Metrics -->
+                <div class="analytics-card">
+                    <h3><i class="fas fa-chart-pie"></i> Performance Overview</h3>
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <div class="metric-value" id="totalStudents">0</div>
+                            <div class="metric-label">Total Students</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value" id="activeStudents">0</div>
+                            <div class="metric-label">Active Students</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value" id="probationStudents">0</div>
+                            <div class="metric-label">On Probation</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="notification" class="notification"></div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

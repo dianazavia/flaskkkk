@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students - Student Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>EduManage</span>
+            </div>
+            <div class="nav-menu">
+                <a href="{{ url_for('home') }}" class="nav-link">Dashboard</a>
+                <a href="{{ url_for('student_list') }}" class="nav-link active">Students</a>
+                <a href="{{ url_for('analytics') }}" class="nav-link">Analytics</a>
+            </div>
+            <div class="nav-actions">
+                <button class="btn btn-primary" onclick="showAddStudentModal()">
+                    <i class="fas fa-plus"></i> Add Student
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>Student Management</h1>
+            <p>Manage all student records and information</p>
+        </div>
+    </section>
+
+    <section class="students-section">
+        <div class="container">
+            <div class="students-header">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search students...">
+                </div>
+                <div class="filter-options">
+                    <select id="courseFilter">
+                        <option value="">All Courses</option>
+                        {% for course in courses %}
+                        <option value="{{ course }}">{{ course }}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="yearFilter">
+                        <option value="">All Years</option>
+                        {% for year in years %}
+                        <option value="{{ year }}">Year {{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="students-table-container">
+                <table class="students-table">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Course</th>
+                            <th>Year</th>
+                            <th>GPA</th>
+                            <th>Attendance</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr class="student-row" data-course="{{ student.course }}" data-year="{{ student.year }}">
+                            <td>
+                                <div class="student-cell">
+                                    <div class="student-avatar small">{{ student.name[0] }}</div>
+                                    <div class="student-info">
+                                        <div class="student-name">{{ student.name }}</div>
+                                        <div class="student-email">{{ student.email }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ student.course }}</td>
+                            <td>Year {{ student.year }}</td>
+                            <td>
+                                <div class="gpa-badge gpa-{{ 'high' if student.gpa >= 3.5 else 'medium' if student.gpa >= 3.0 else 'low' }}">
+                                    {{ student.gpa }}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="attendance-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: {{ student.attendance }}%"></div>
+                                    </div>
+                                    <span>{{ student.attendance }}%</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="status-badge status-{{ student.status.lower() }}">
+                                    {{ student.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-icon" onclick="editStudent({{ student.id }})" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-icon btn-danger" onclick="deleteStudent({{ student.id }})" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add Student Modal -->
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Student</h3>
+                <span class="close" onclick="closeModal('addStudentModal')">&times;</span>
+            </div>
+            <form id="addStudentForm" class="student-form">
+                <!-- Same form as index.html -->
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Student Modal -->
+    <div id="editStudentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Student</h3>
+                <span class="close" onclick="closeModal('editStudentModal')">&times;</span>
+            </div>
+            <form id="editStudentForm" class="student-form">
+                <!-- Form will be populated dynamically -->
+            </form>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

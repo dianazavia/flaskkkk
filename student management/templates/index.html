@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>EduManage</span>
+            </div>
+            <div class="nav-menu">
+                <a href="{{ url_for('home') }}" class="nav-link active">Dashboard</a>
+                <a href="{{ url_for('student_list') }}" class="nav-link">Students</a>
+                <a href="{{ url_for('analytics') }}" class="nav-link">Analytics</a>
+            </div>
+            <div class="nav-actions">
+                <button class="btn btn-outline" onclick="showAddStudentModal()">
+                    <i class="fas fa-plus"></i> Add Student
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title animate-pop-in">
+                Student <span class="gradient-text">Management</span> System
+            </h1>
+            <p class="hero-subtitle animate-pop-in">
+                Efficiently manage student records, track performance, and generate insights
+            </p>
+            <div class="hero-buttons animate-pop-in">
+                <button class="btn btn-primary" onclick="showAddStudentModal()">
+                    <i class="fas fa-user-plus"></i> Add New Student
+                </button>
+                <button class="btn btn-secondary" onclick="window.location.href='{{ url_for('student_list') }}'">
+                    <i class="fas fa-list"></i> View All Students
+                </button>
+            </div>
+        </div>
+        <div class="hero-background">
+            <div class="floating-shape shape-1"></div>
+            <div class="floating-shape shape-2"></div>
+            <div class="floating-shape shape-3"></div>
+        </div>
+    </section>
+
+    <!-- Quick Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <h2 class="section-title">System Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-number" data-target="{{ stats.total_students }}">0</div>
+                    <div class="stat-label">Total Students</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="stat-number" data-target="{{ stats.active_students }}">0</div>
+                    <div class="stat-label">Active Students</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-number" data-target="{{ stats.average_gpa }}">0</div>
+                    <div class="stat-label">Average GPA</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-number" data-target="{{ stats.average_attendance }}">0</div>
+                    <div class="stat-label">Avg Attendance %</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Students Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Recent Students</h2>
+                <button class="btn btn-outline" onclick="window.location.href='{{ url_for('student_list') }}'">
+                    View All <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            <div class="students-grid">
+                {% for student in students[:4] %}
+                <div class="student-card" data-aos="fade-up">
+                    <div class="student-avatar">
+                        {{ student.name[0] }}
+                    </div>
+                    <div class="student-info">
+                        <h3>{{ student.name }}</h3>
+                        <p class="student-course">{{ student.course }}</p>
+                        <div class="student-details">
+                            <span class="detail-item">
+                                <i class="fas fa-calendar-alt"></i> Year {{ student.year }}
+                            </span>
+                            <span class="detail-item">
+                                <i class="fas fa-star"></i> GPA: {{ student.gpa }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="student-status status-{{ student.status.lower() }}">
+                        {{ student.status }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="quick-actions">
+        <div class="container">
+            <h2 class="section-title">Quick Actions</h2>
+            <div class="actions-grid">
+                <div class="action-card" onclick="showAddStudentModal()">
+                    <div class="action-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h3>Add Student</h3>
+                    <p>Register new student in the system</p>
+                </div>
+                <div class="action-card" onclick="window.location.href='{{ url_for('student_list') }}'">
+                    <div class="action-icon">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <h3>Manage Students</h3>
+                    <p>View and edit student records</p>
+                </div>
+                <div class="action-card" onclick="window.location.href='{{ url_for('analytics') }}'">
+                    <div class="action-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>View Analytics</h3>
+                    <p>See performance insights and reports</p>
+                </div>
+                <div class="action-card" onclick="generateReport()">
+                    <div class="action-icon">
+                        <i class="fas fa-file-export"></i>
+                    </div>
+                    <h3>Generate Report</h3>
+                    <p>Export student data and statistics</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add Student Modal -->
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Student</h3>
+                <span class="close" onclick="closeModal('addStudentModal')">&times;</span>
+            </div>
+            <form id="addStudentForm" class="student-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="course">Course *</label>
+                        <select id="course" name="course" required>
+                            <option value="">Select Course</option>
+                            {% for course in courses %}
+                            <option value="{{ course }}">{{ course }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="year">Year *</label>
+                        <select id="year" name="year" required>
+                            <option value="">Select Year</option>
+                            {% for year in years %}
+                            <option value="{{ year }}">Year {{ year }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="gpa">GPA *</label>
+                        <input type="number" id="gpa" name="gpa" min="0" max="4" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="attendance">Attendance % *</label>
+                        <input type="number" id="attendance" name="attendance" min="0" max="100" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="status">Status *</label>
+                    <select id="status" name="status" required>
+                        <option value="Active">Active</option>
+                        <option value="Probation">Probation</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="enrollment_date">Enrollment Date *</label>
+                    <input type="date" id="enrollment_date" name="enrollment_date" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('addStudentModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Student</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification System -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
